@@ -1,0 +1,73 @@
+# ===== Java / Maven =====
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven wrapper files
+.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+!/.mvn/wrapper/maven-wrapper.properties
+
+# Maven build logs
+log/
+logs/
+*.log
+*.tmp
+
+# ===== IntelliJ IDEA =====
+.idea/
+*.iml
+*.iws
+out/
+
+# ===== macOS =====
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ===== OS generated files =====
+ehthumbs.db
+Thumbs.db
+
+# ===== Environment & Config =====
+.env
+*.local
+*.env.backup
+application-local.properties
+application-dev.properties
+application-test.properties
+application-prod.properties
+
+# If you use Docker
+docker-compose.override.yml
+*.pid
+
+# ===== Sensitive Info =====
+# Prevent committing passwords or secrets
+**/application.properties
+**/application.yml
+**/application.yaml
+
+# ===== Optional: Node / Frontend (if you ever use Vue/React) =====
+node_modules/
+dist/
+
+# ===== JetBrains cache =====
+.idea/
+.idea_modules/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/shelf/
+
+# ===== OS cache =====
+*.swp
+*.swo
+*.bak
+*.tmp
+
