@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.order.mapper.OrderMapper">
+
+    <!-- 订单列表查询 - 优化版本，使用索引 -->
+    <select id="selectOrderList" resultType="com.example.order.dto.OrderListDTO">
+        SELECT
+        o.id,
+        o.order_no AS orderNo,
+        o.user_id AS userId,
+        u.username,
+        u.nickname,
+        o.product_id AS productId,
+        p.product_name AS productName,
+        o.quantity,
+        o.total_amount AS totalAmount,
+        o.status,
+        o.create_time AS createTime
+        FROM t_order o
+        INNER JOIN t_user u ON o.user_id = u.id
+        INNER JOIN t_product p ON o.product_id = p.id
+        <where>
+            <if test="query.userId != null">
+                AND o.user_id = #{query.userId}
+            </if>
+            <if test="query.status != null">
+                AND o.status = #{query.status}
+            </if>
+            <if test="query.orderNo != null and query.orderNo != ''">
+                AND o.order_no = #{query.orderNo}
+            </if>
+            <if test="query.startTime != null">
+                AND o.create_time &gt;= #{query.startTime}
+            </if>
+            <if test="query.endTime != null">
+                AND o.create_time &lt;= #{query.endTime}
+            </if>
+        </where>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <!-- 订单详情查询 -->
+    <select id="selectOrderDetail" resultType="com.example.order.dto.OrderDetailDTO">
+        SELECT
+        o.id,
+        o.order_no AS orderNo,
+        o.user_id AS userId,
+        u.username,
+        u.nickname,
+        u.phone,
+        u.email,
+        o.product_id AS productId,
+        p.product_name AS productName,
+        p.product_code AS productCode,
+        p.price,
+        o.quantity,
+        o.total_amount AS totalAmount,
+        o.status,
+        o.create_time AS createTime,
+        o.update_time AS updateTime
+        FROM t_order o
+        INNER JOIN t_user u ON o.user_id = u.id
+        INNER JOIN t_product p ON o.product_id = p.id
+        WHERE o.id = #{orderId}
+    </select>
+
+    <!-- 根据订单号查询详情 -->
+    <select id="selectOrderDetailByNo" resultType="com.example.order.dto.OrderDetailDTO">
+        SELECT
+        o.id,
+        o.order_no AS orderNo,
+        o.user_id AS userId,
+        u.username,
+        u.nickname,
+        u.phone,
+        u.email,
+        o.product_id AS productId,
+        p.product_name AS productName,
+        p.product_code AS productCode,
+        p.price,
+        o.quantity,
+        o.total_amount AS totalAmount,
+        o.status,
+        o.create_time AS createTime,
+        o.update_time AS updateTime
+        FROM t_order o
+        INNER JOIN t_user u ON o.user_id = u.id
+        INNER JOIN t_product p ON o.product_id = p.id
+        WHERE o.order_no = #{orderNo}
+    </select>
+
+</mapper>
