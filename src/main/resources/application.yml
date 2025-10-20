@@ -11,6 +11,19 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
 
+  jpa:
+    hibernate:
+      ddl-auto: validate  # 只验证，不自动建表
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
   redis:
     host: localhost
     port: 6379
