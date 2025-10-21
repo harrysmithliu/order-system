@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.order.mapper.OrderMapper">
+<mapper namespace="com.harry.order.mapper.OrderMapper">
 
     <!-- 订单列表查询 - 优化版本，使用索引 -->
-    <select id="selectOrderList" resultType="com.example.order.dto.response.OrderListDTO">
+    <select id="selectOrderList" resultType="com.harry.order.dto.response.OrderListDTO">
         SELECT
         o.id,
         o.order_no AS orderNo,
@@ -41,7 +41,7 @@
     </select>
 
     <!-- 订单详情查询 -->
-    <select id="selectOrderDetail" resultType="com.example.order.dto.response.OrderDetailDTO">
+    <select id="selectOrderDetail" resultType="com.harry.order.dto.response.OrderDetailDTO">
         SELECT
         o.id,
         o.order_no AS orderNo,
@@ -66,7 +66,7 @@
     </select>
 
     <!-- 根据订单号查询详情 -->
-    <select id="selectOrderDetailByNo" resultType="com.example.order.dto.response.OrderDetailDTO">
+    <select id="selectOrderDetailByNo" resultType="com.harry.order.dto.response.OrderDetailDTO">
         SELECT
         o.id,
         o.order_no AS orderNo,
