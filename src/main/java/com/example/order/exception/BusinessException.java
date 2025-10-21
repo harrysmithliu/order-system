@@ -1,4 +1,4 @@
-package com.example.order.exceptions;
+package com.example.order.exception;
 
 public class BusinessException extends RuntimeException {
     private Integer code;
@@ -11,5 +11,9 @@ public class BusinessException extends RuntimeException {
     public BusinessException(Integer code, String message) {
         super(message);
         this.code = code;
+    }
+
+    public Integer getCode() {
+        return code;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.order.exceptions;
+package com.example.order.exception;
 
 import com.example.order.common.Result;
 import lombok.extern.slf4j.Slf4j;
