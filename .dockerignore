@@ -1,0 +1,28 @@
+# Maven
+target/
+!target/*.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# 日志
+logs/
+*.log
+
+# 临时文件
+*.tmp
+*.swp
+*.bak
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
