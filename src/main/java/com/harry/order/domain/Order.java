@@ -2,7 +2,6 @@ package com.harry.order.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,12 +36,12 @@ public class Order {
     /** 大表场景：单向 LAZY 关联，禁止级联，避免放回 JSON 时无限递归 */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    @BatchSize(size = 64) // 批量抓取，减少 N+1
+//    @BatchSize(size = 64) // 批量抓取，减少 N+1
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
-    @BatchSize(size = 64)
+//    @BatchSize(size = 64)
     private Product product;
 
     @Column(nullable = false)

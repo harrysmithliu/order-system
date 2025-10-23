@@ -3,10 +3,12 @@ package com.harry.order.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@BatchSize(size = 64)
 @Entity
 @Table(name = "t_product",
         indexes = {
