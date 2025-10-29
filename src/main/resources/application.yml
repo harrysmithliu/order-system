@@ -18,9 +18,10 @@ spring:
         order_inserts: true
         order_updates: true
 
-  # Redis 缓存可后续再启用
-  cache:
-    type: simple
+  data:
+    redis:
+      host: localhost   # 关键：用 localhost，因为是本机访问容器
+      port: 6379
 
 server:
   port: 8080
