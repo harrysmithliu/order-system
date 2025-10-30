@@ -1,5 +1,6 @@
 package com.harry.order.service;
 
+import com.harry.order.common.BadRequestException;
 import com.harry.order.domain.OrderStatus;
 import com.harry.order.repository.OrderRepository;
 import com.harry.order.service.dto.OrderSummaryDTO;
@@ -44,6 +45,9 @@ public class OrderService {
             int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
+        if (page < 0 || size <= 0) {
+            throw new BadRequestException("page/size must be positive");
+        }
         return orderRepository.findOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, pageable);
     }
 }

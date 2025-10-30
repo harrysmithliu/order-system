@@ -1,5 +1,6 @@
 package com.harry.order.controller;
 
+import com.harry.order.common.NotFoundException;
 import com.harry.order.domain.OrderStatus;
 import com.harry.order.service.OrderService;
 import com.harry.order.service.dto.OrderSummaryDTO;
@@ -31,7 +32,11 @@ public class OrderController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        return orderService.getOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, page, size);
+        Page<OrderSummaryDTO> pageResult = orderService.getOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, page, size);
+        if (pageResult.isEmpty()) {
+            throw new NotFoundException("No orders found");
+        }
+        return pageResult;
     }
 
 }
