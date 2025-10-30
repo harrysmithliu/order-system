@@ -23,6 +23,16 @@ spring:
       host: localhost   # 关键：用 localhost，因为是本机访问容器
       port: 6379
 
+  rabbitmq:
+    host: localhost         # 如果用 docker: -p 5672:5672
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    # 以下先保留注释，下一步增强时再开
+    # publisher-confirm-type: correlated
+    # publisher-returns: true
+
 server:
   port: 8080
 
