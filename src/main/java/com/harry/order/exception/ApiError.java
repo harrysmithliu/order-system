@@ -1,4 +1,4 @@
-package com.harry.order.api;
+package com.harry.order.exception;
 
 import lombok.Builder;
 import lombok.Data;
