@@ -4,6 +4,12 @@ spring:
     username: app
     password: app_pass
     driver-class-name: com.mysql.cj.jdbc.Driver
+#    hikari:                          # 连接池配置项
+#      maximum-pool-size: 10          # 最大连接数（默认10）
+#      minimum-idle: 2                # 最小空闲连接数
+#      idle-timeout: 30000            # 空闲连接超时时间（毫秒）
+#      max-lifetime: 600000           # 连接最大生命周期（毫秒）
+#      connection-timeout: 10000      # 等待连接超时时间（毫秒）
 
   jpa:
     hibernate:
@@ -18,10 +24,14 @@ spring:
         order_inserts: true
         order_updates: true
 
+  cache:
+    type: redis
   data:
     redis:
       host: localhost   # 关键：用 localhost，因为是本机访问容器
       port: 6379
+      serializer:
+        value: jackson
 
   rabbitmq:
     host: localhost         # 如果用 docker: -p 5672:5672

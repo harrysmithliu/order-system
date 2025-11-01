@@ -1,4 +1,4 @@
-package com.harry.order.common;
+package com.harry.order.exception;
 
 public class NotFoundException  extends BusinessException {
 

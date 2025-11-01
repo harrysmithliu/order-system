@@ -1,7 +1,8 @@
 package com.harry.order.service;
 
-import com.harry.order.common.BadRequestException;
+import com.harry.order.common.PageResult;
 import com.harry.order.domain.OrderStatus;
+import com.harry.order.exception.BadRequestException;
 import com.harry.order.repository.OrderRepository;
 import com.harry.order.service.dto.OrderSummaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class OrderService {
      * @return
      */
     @Cacheable(cacheNames = "order:pages", keyGenerator = "queryKey",
-            unless = "#result == null || #result.isEmpty()")
-    public Page<OrderSummaryDTO> getOrderSummaries(
+            unless = "#result == null || #result.content.isEmpty()")
+    public PageResult<OrderSummaryDTO> getOrderSummaries(
             OrderStatus status,
             Long userId,
             Long productId,
@@ -44,10 +45,13 @@ public class OrderService {
             int page,
             int size
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
         if (page < 0 || size <= 0) {
             throw new BadRequestException("page/size must be positive");
         }
-        return orderRepository.findOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, pageable);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
+        Page<OrderSummaryDTO> p = orderRepository.findOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, pageable);
+
+        return new PageResult<>(p.getContent(), p.getNumber(), p.getSize(), p.getTotalElements());
     }
 }

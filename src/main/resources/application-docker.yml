@@ -18,16 +18,16 @@ spring:
         order_inserts: true
         order_updates: true
 
+  cache:
+    type: redis
   data:
     redis:
       host: redis
       port: 6379
-
-  cache:
-    type: redis
-    redis:
       time-to-live: 300000   # 5分钟缓存 TTL
       cache-null-values: false
+      serializer:
+        value: jackson
 
 server:
   port: 8080

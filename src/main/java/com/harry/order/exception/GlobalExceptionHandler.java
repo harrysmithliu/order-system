@@ -1,6 +1,5 @@
 package com.harry.order.exception;
 
-import com.harry.order.common.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;

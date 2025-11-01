@@ -1,8 +1,8 @@
 package com.harry.order.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,25 +22,32 @@ import java.time.Duration;
 public class RedisCacheConfig {
 
     @Bean
-    public CacheManager cacheManager(RedisConnectionFactory factory) {
-            // 能处理 LocalDateTime 的 ObjectMapper
-            ObjectMapper om = new ObjectMapper();
-            om.registerModule(new JavaTimeModule());
-            om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    public CacheManager cacheManager(RedisConnectionFactory factory,
+                                     ObjectMapper springObjectMapper // 复用 Spring Boot 的全局 ObjectMapper
+    ) {
+        // 复制 Spring 的 ObjectMapper（已含 JavaTimeModule、参数命名策略等）
+        ObjectMapper om = springObjectMapper.copy();
+        om.activateDefaultTyping(
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+        );
 
-            // key 用字符串，value 用支持 JavaTime 的 GenericJackson2JsonRedisSerializer
-            StringRedisSerializer keySerializer = new StringRedisSerializer();
-            GenericJackson2JsonRedisSerializer valueSerializer =
-                    new GenericJackson2JsonRedisSerializer(om);
+        // 用 GenericJackson2JsonRedisSerializer(om) —— 新版推荐写法
+        GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(om);
 
-            RedisCacheConfiguration config = RedisCacheConfiguration
-                    .defaultCacheConfig()
-                    .entryTtl(Duration.ofMinutes(5)) // 默认 5 分钟
-                    .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer))
-                    .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer));
+        // 统一设置 key 与 value 的序列化器 + TTL
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(30))
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
+                )
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer)
+                );
 
-            return RedisCacheManager.builder(factory)
-                    .cacheDefaults(config)
-                    .build();
+        return RedisCacheManager.builder(factory)
+                .cacheDefaults(config)
+                .build();
     }
 }

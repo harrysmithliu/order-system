@@ -118,6 +118,13 @@
 <!--			<scope>test</scope>-->
 <!--		</dependency>-->
 
+		<!-- 接口文档自动生成，启动项目后访问：http://localhost:8080/swagger-ui/index.html -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
