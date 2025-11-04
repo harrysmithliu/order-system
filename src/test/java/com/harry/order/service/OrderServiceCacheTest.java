@@ -29,4 +29,5 @@ public class OrderServiceCacheTest {
         // 验证 repository 只被调用一次（第二次命中缓存）
         verify(repo, times(1)).findOrderSummaries(any(), any(), any(), any(), any(), any(), any());
     }
+    //done
 }
