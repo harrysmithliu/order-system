@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -48,11 +49,11 @@ public class OrderController {
             @RequestParam(name = "createdBefore", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdBefore,
             @Parameter(description = "Keyword for fuzzy search") @RequestParam(name = "keyword", required = false) String keyword,
-            @Parameter(description = "Page number (starting from 0)") @RequestParam(name = "page", defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(name = "size", defaultValue = "10") int size
+            @Parameter(description = "Page number (starting from 0)") @RequestParam(name = "page", defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Page size") @RequestParam(name = "size", defaultValue = "10") @Min(1) int size
     ) {
         PageResult<OrderSummaryDTO> result = orderService.getOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, page, size);
-        if (result.getContent() == null || result.getContent().isEmpty()) {
+        if (result == null || result.getContent() == null || result.getContent().isEmpty()) {
             throw new NotFoundException("No orders found");
         }
         return result;

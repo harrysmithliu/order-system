@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.OffsetDateTime;
 
@@ -31,6 +32,12 @@ public class GlobalExceptionHandler {
                 .map(fe -> fe.getField() + " " + fe.getDefaultMessage())
                 .findFirst().orElse("Validation failed");
         return build(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", msg, req.getRequestURI(), ex);
+    }
+
+    // ↓ 新增：Spring 6.1+ 方法参数验证
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ApiError> handleHandlerMethodValidation(HandlerMethodValidationException ex, HttpServletRequest req) {
+        return build(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", ex.getMessage(), req.getRequestURI(), ex);
     }
 
     // GET 查询参数校验失败（@RequestParam @PathVariable）
