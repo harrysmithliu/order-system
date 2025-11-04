@@ -1,5 +1,6 @@
 package com.harry.order.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.harry.order.domain.OrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Schema(description = "Order summary information")
 public class OrderSummaryDTO {
 
@@ -52,8 +54,12 @@ public class OrderSummaryDTO {
     private OrderStatus status;
 
     /** 创建与更新时间 */
-    @Schema(description = "Creation time", example = "2025-03-10T14:23:00")
+    @Schema(description = "Creation time", example = "2025-03-10 14:23:00")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
-    @Schema(description = "Update time", example = "2025-03-10T16:00:00")
+    @Schema(description = "Update time", example = "2025-03-10 16:00:00")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
+
+
 }

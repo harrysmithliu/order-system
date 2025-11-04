@@ -3,6 +3,7 @@ package com.harry.order.config;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ public class RedisCacheConfig {
     ) {
         // 复制 Spring 的 ObjectMapper（已含 JavaTimeModule、参数命名策略等）
         ObjectMapper om = springObjectMapper.copy();
+        om.registerModule(new JavaTimeModule());
         om.activateDefaultTyping(
                 LaissezFaireSubTypeValidator.instance,
                 ObjectMapper.DefaultTyping.NON_FINAL,

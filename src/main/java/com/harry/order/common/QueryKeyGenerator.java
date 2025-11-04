@@ -1,4 +1,4 @@
-package com.harry.order.config;
+package com.harry.order.common;
 
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.stereotype.Component;

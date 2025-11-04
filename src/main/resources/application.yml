@@ -15,10 +15,10 @@ spring:
     hibernate:
       ddl-auto: none        # 不自动建表，保留你已有的表结构
     open-in-view: false
-    show-sql: false
+    show-sql: false         # 单独打印hibernate的sql，与logging.level.org.hibernate.SQL二选一
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         jdbc:
           batch_size: 50
         order_inserts: true
@@ -48,7 +48,11 @@ server:
 
 logging:
   level:
-    org.springframework: info
+    root: INFO  # 添加这一行，设置根日志级别
+    com.harry.order: DEBUG  # 添加这一行，你的项目包名
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    org.springframework: INFO
 
 management:
   endpoints:
