@@ -2,6 +2,7 @@ package com.harry.order.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -9,13 +10,15 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 @Slf4j
 @Aspect
 @Component
-public class WebLogConfig {
+@AllArgsConstructor
+public class WebLogConfig implements HandlerInterceptor {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     @Around("execution(* com.harry.order.controller..*(..))")
     public Object logRequest(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -33,7 +36,7 @@ public class WebLogConfig {
         Object[] args = joinPoint.getArgs();
 
         // 打印请求信息
-        log.info("💡 [REQUEST] Method: {} | Path: {} | Params: {}",
+        log.info("[REQUEST] Method: {} | Path: {} | Params: {}",
                 method, uri, queryString != null ? queryString : "none");
 
         if (args.length > 0) {
