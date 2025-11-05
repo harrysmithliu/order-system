@@ -3,6 +3,7 @@ package com.harry.order.controller;
 import com.harry.order.common.PageResult;
 import com.harry.order.domain.OrderStatus;
 import com.harry.order.exception.NotFoundException;
+import com.harry.order.service.OrderCommandService;
 import com.harry.order.service.OrderService;
 import com.harry.order.service.dto.OrderSummaryDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,6 +29,9 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderCommandService orderCommandService;
 
     @Operation(
             summary = "Get paginated order list",
@@ -57,6 +62,15 @@ public class OrderController {
             throw new NotFoundException("No orders found");
         }
         return result;
+    }
+
+    /**
+     * 取消订单
+     */
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long id) {
+        orderCommandService.cancel(id);
+        return ResponseEntity.ok().build();
     }
 
 }

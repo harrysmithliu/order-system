@@ -162,8 +162,12 @@
 					<source>17</source>
 					<target>17</target>
 					<parameters>true</parameters>  <!-- 关键：把方法参数名写进字节码 -->
+					<compilerArgs>
+						<arg>-parameters</arg>  <!-- 关键参数 -->
+					</compilerArgs>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 
