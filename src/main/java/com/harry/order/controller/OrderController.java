@@ -67,9 +67,9 @@ public class OrderController {
     /**
      * 取消订单
      */
-    @PutMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancelOrder(@PathVariable Long id) {
-        orderCommandService.cancel(id);
+    @PutMapping("/{orderNo}/cancel")
+    public ResponseEntity<Void> cancelOrder(@PathVariable String orderNo) {
+        orderCommandService.cancel(orderNo);
         return ResponseEntity.ok().build();
     }
 

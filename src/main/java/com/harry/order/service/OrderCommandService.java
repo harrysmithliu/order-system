@@ -29,20 +29,20 @@ public class OrderCommandService {
     }
 
     @Caching(evict = {
-            @CacheEvict(cacheNames = "order:byId", key = "#id"),
+            @CacheEvict(cacheNames = "order:byNo", key = "#orderNo"),
             @CacheEvict(cacheNames = "order:pages", allEntries = true)
     })
-    public void cancel(Long orderId) {
+    public void cancel(String orderNo) {
 //        repo.deleteById(orderId);
         // 1. 数据层操作
-        Order order = repo.findById(orderId)
-                .orElseThrow(() -> new NotFoundException("订单不存在: " + orderId));
+        Order order = repo.findByOrderNo(orderNo)
+                .orElseThrow(() -> new NotFoundException("订单不存在: " + orderNo));
 
         order.setStatus(OrderStatus.CANCELED);
         repo.save(order);
 
         // 2. 构造事件对象
-        OrderEvent event = new OrderEvent(orderId, "CANCELED", "订单已取消");
+        OrderEvent event = new OrderEvent(orderNo, "CANCELED", "订单已取消");
 
         // 3. 发送事件到 RabbitMQ
         rabbitTemplate.convertAndSend(
