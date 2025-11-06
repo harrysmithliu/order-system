@@ -1,9 +1,11 @@
 package com.harry.order.exception;
 
-public class NotFoundException  extends BusinessException {
+import com.harry.order.common.ErrorCode;
 
-    public NotFoundException(String message) {
-        super("NOT_FOUND", message);
+public class NotFoundException extends BusinessException {
+
+    public NotFoundException(String resourceName) {
+        super(ErrorCode.ORDER_NOT_FOUND, resourceName + "不存在");
     }
 
 }

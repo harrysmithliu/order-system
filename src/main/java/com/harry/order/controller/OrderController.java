@@ -1,7 +1,9 @@
 package com.harry.order.controller;
 
 import com.harry.order.common.PageResult;
+import com.harry.order.common.Result;
 import com.harry.order.domain.OrderStatus;
+import com.harry.order.exception.BusinessException;
 import com.harry.order.exception.NotFoundException;
 import com.harry.order.service.OrderCommandService;
 import com.harry.order.service.OrderService;
@@ -16,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -68,9 +69,17 @@ public class OrderController {
      * 取消订单
      */
     @PutMapping("/{orderNo}/cancel")
-    public ResponseEntity<Void> cancelOrder(@PathVariable String orderNo) {
-        orderCommandService.cancel(orderNo);
-        return ResponseEntity.ok().build();
+    public Result<Void> cancelOrder(@PathVariable String orderNo) {
+//        orderCommandService.cancel(orderNo);
+//        return ResponseEntity.ok().build();
+        try {
+            orderCommandService.cancel(orderNo);
+            return Result.success();
+        } catch (NotFoundException e) {
+            return Result.fail(404, e.getMessage());
+        } catch (BusinessException e) {
+            return Result.fail(400, e.getMessage());
+        }
     }
 
 }
