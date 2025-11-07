@@ -14,6 +14,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -21,26 +22,41 @@ import java.time.LocalDateTime;
 @Service
 @AllArgsConstructor
 public class OrderCommandService {
-    private final OrderRepository repo;
+    private final OrderRepository orderRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final OutboxService outboxService;
 
-    @Caching(evict = {
-            @CacheEvict(cacheNames = "order:byId", key = "#result.id", condition = "#result != null"),
-            @CacheEvict(cacheNames = "order:pages", allEntries = true) // 页缓存整体失效（简单可靠）
-    })
+//    @Caching(evict = {
+//            @CacheEvict(cacheNames = "order:byId", key = "#result.id", condition = "#result != null"),
+//            @CacheEvict(cacheNames = "order:pages", allEntries = true) // 页缓存整体失效（简单可靠）
+//    })
+//    public Order create(Order order) {
+//        return orderRepository.save(order);
+//    }
+
+    @Transactional
     public Order create(Order order) {
-        return repo.save(order);
+        Order saved = orderRepository.save(order);
+
+        // Write to outbox_event within the same transaction
+        outboxService.saveEvent(
+                "order",
+                saved.getOrderNo(),
+                "OrderCreated",
+                saved
+        );
+        return saved;
     }
 
     @Caching(evict = {
             @CacheEvict(cacheNames = "order:byNo", key = "#orderNo"),
             @CacheEvict(cacheNames = "order:pages", allEntries = true)
     })
+    @Transactional
     public void cancel(String orderNo) {
-//        repo.deleteById(orderId);
         // 1. 数据层操作
-        Order order = repo.findByOrderNo(orderNo)
-                .orElseThrow(() -> new NotFoundException("订单 " + orderNo));
+        Order order = orderRepository.findByOrderNo(orderNo)
+                .orElseThrow(() -> new NotFoundException("Order " + orderNo));
 
         // 2. 检查订单状态 - 如果已经是CANCELED则直接返回失败
         if (order.getStatus() == OrderStatus.CANCELED) {
@@ -54,7 +70,7 @@ public class OrderCommandService {
 
         order.setStatus(OrderStatus.CANCELED);
         order.setUpdateTime(LocalDateTime.now());
-        repo.save(order);
+        orderRepository.save(order);
 
         // 发布事件
         publishOrderCanceledEvent(order);
@@ -73,14 +89,14 @@ public class OrderCommandService {
         OrderEvent event = new OrderEvent(
                 order.getOrderNo(),
                 OrderStatus.CANCELED,
-                "订单已取消"
+                "Order has been canceled"
         );
         rabbitTemplate.convertAndSend(
                 RabbitMQConfig.ORDER_TOPIC_EXCHANGE, // 交换机
                 "order.canceled",                    // routing key
                 event                                // 消息体
         );
-        log.info("[ORDER_EVENT] 已发布事件到MQ: {}", event);
+        log.info("[ORDER_EVENT] Published event to MQ: {}", event);
     }
 
     // 更新状态、发货、支付等都同理做 Evict

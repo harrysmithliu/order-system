@@ -53,3 +53,7 @@ management:
       probes:
         enabled: true          # 暴露 /actuator/health/liveness|readiness
       show-details: never      # 开发期可设 "when_authorized"
+
+outbox:
+  scheduler:
+    delay-ms: 10000   # 10 s

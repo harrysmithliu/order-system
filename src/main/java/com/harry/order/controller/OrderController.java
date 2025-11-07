@@ -3,10 +3,11 @@ package com.harry.order.controller;
 import com.harry.order.common.PageResult;
 import com.harry.order.common.Result;
 import com.harry.order.domain.OrderStatus;
+import com.harry.order.exception.ApiError;
 import com.harry.order.exception.BusinessException;
 import com.harry.order.exception.NotFoundException;
 import com.harry.order.service.OrderCommandService;
-import com.harry.order.service.OrderService;
+import com.harry.order.service.OrderQueryService;
 import com.harry.order.service.dto.OrderSummaryDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,7 +30,7 @@ import java.time.LocalDateTime;
 public class OrderController {
 
     @Autowired
-    private OrderService orderService;
+    private OrderQueryService orderQueryService;
 
     @Autowired
     private OrderCommandService orderCommandService;
@@ -39,9 +40,26 @@ public class OrderController {
             description = "Filter orders by status, user, product, or date range with pagination support"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved orders",
-                    content = @Content(schema = @Schema(implementation = OrderSummaryDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No orders found")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved orders",
+                    content = @Content(schema = @Schema(implementation = PageResult.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid query parameters (e.g., page < 0, size < 1)",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No orders found matching the criteria",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))
+            )
     })
     @GetMapping
     public PageResult<OrderSummaryDTO> getOrders(
@@ -58,9 +76,9 @@ public class OrderController {
             @Parameter(description = "Page number (starting from 0)") @RequestParam(name = "page", defaultValue = "0") @Min(0) int page,
             @Parameter(description = "Page size") @RequestParam(name = "size", defaultValue = "10") @Min(1) int size
     ) {
-        PageResult<OrderSummaryDTO> result = orderService.getOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, page, size);
+        PageResult<OrderSummaryDTO> result = orderQueryService.getOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, page, size);
         if (result == null || result.getContent() == null || result.getContent().isEmpty()) {
-            throw new NotFoundException("订单");
+            throw new NotFoundException("Order");
         }
         return result;
     }
@@ -75,10 +93,26 @@ public class OrderController {
      */
     @Operation(summary = "Cancel an order")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Order cancelled successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid order status or duplicate cancel"),
-            @ApiResponse(responseCode = "404", description = "Order not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Order cancelled successfully",
+                    content = @Content(schema = @Schema(implementation = Result.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid order status or duplicate cancel attempt",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Order not found",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))
+            )
     })
     @PutMapping("/{orderNo}/cancel")
     public Result<Void> cancelOrder(@PathVariable String orderNo) {

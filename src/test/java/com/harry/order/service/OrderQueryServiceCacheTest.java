@@ -12,10 +12,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest // 使用你项目的 RedisCacheConfig；本地 Redis 已映射 6379
-public class OrderServiceCacheTest {
+public class OrderQueryServiceCacheTest {
 
     @Autowired
-    OrderService service;
+    OrderQueryService service;
     @SpyBean
     OrderRepository repo;  // 监控底层调用
     @Autowired

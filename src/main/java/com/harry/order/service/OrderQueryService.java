@@ -1,47 +1,58 @@
 package com.harry.order.service;
 
-import com.harry.order.domain.Order;
-import com.harry.order.domain.Product;
-import com.harry.order.domain.User;
+import com.harry.order.common.PageResult;
+import com.harry.order.domain.OrderStatus;
+import com.harry.order.exception.BadRequestException;
 import com.harry.order.repository.OrderRepository;
-import com.harry.order.repository.ProductRepository;
-import com.harry.order.repository.UserRepository;
+import com.harry.order.service.dto.OrderSummaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 public class OrderQueryService {
 
     @Autowired
-    private final OrderRepository orderRepo;
+    private OrderRepository orderRepository;
 
-    @Autowired
-    private final UserRepository userRepo;
+    /**
+     * 在 Service 的分页查询方法上加 @Cacheable，并指定 key 生成器
+     * @param status
+     * @param userId
+     * @param productId
+     * @param createdAfter
+     * @param createdBefore
+     * @param keyword
+     * @param page
+     * @param size
+     * @return
+     */
+    @Cacheable(cacheNames = "order:pages", keyGenerator = "queryKey",
+            unless = "#result == null || #result.content.isEmpty()")
+    public PageResult<OrderSummaryDTO> getOrderSummaries(
+            OrderStatus status,
+            Long userId,
+            Long productId,
+            LocalDateTime createdAfter,
+            LocalDateTime createdBefore,
+            String keyword,
+            int page,
+            int size
+    ) {
+        if (page < 0 || size <= 0) {
+            throw new BadRequestException("page/size must be positive");
+        }
 
-    @Autowired
-    private final ProductRepository productRepo;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
+        Page<OrderSummaryDTO> p = orderRepository.findOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, pageable);
 
-    public OrderQueryService(OrderRepository o, UserRepository u, ProductRepository p) {
-        this.orderRepo = o;
-        this.userRepo = u;
-        this.productRepo = p;
+        return new PageResult<>(p.getContent(), p.getNumber(), p.getSize(), p.getTotalElements());
     }
 
-    @Cacheable(cacheNames = "order:byId", key = "#id")
-    public Optional<Order> findOrderById(Long id) {
-        return orderRepo.findById(id);
-    }
-
-    @Cacheable(cacheNames = "user:byId", key = "#id")
-    public Optional<User> findUserById(Long id) {
-        return userRepo.findById(id);
-    }
-
-    @Cacheable(cacheNames = "product:byId", key = "#id")
-    public Optional<Product> findProductById(Long id) {
-        return productRepo.findById(id);
-    }
 }

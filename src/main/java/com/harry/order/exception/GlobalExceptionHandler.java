@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiError> handleBusinessException(BusinessException ex, HttpServletRequest req) {
-        log.warn("[业务异常] code={}, message={}", ex.getCode(), ex.getMessage());
+        log.warn("[BusinessException] code={}, message={}", ex.getCode(), ex.getMessage());
         return build(HttpStatus.BAD_REQUEST, ex.getCode(), ex.getMessage(), req.getRequestURI(), null);
     }
 

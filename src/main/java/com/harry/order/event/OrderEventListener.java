@@ -13,7 +13,7 @@ public class OrderEventListener {
      */
     @RabbitListener(queues = "order.events")
     public void handleOrderEvent(OrderEvent event) {
-        log.info("[OrderEventListener] 收到订单事件: {}", event);
+        log.info("[OrderEventListener] Received order event: {}", event);
         // TODO
         // 当前阶段：只是打印，验证收发闭环
         // 后续你可以在这里加业务逻辑，例如通知用户、刷新缓存等

@@ -2,7 +2,7 @@ package com.harry.order.controller;
 
 import com.harry.order.ValidationConfig;
 import com.harry.order.common.PageResult;
-import com.harry.order.service.OrderService;
+import com.harry.order.service.OrderQueryService;
 import com.harry.order.service.dto.OrderSummaryDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class OrderControllerTest {
     MockMvc mvc;
 
     @MockBean
-    OrderService orderService;
+    OrderQueryService orderQueryService;
 
     @Test
     void list_shouldReturn400_whenParamInvalid() throws Exception {
@@ -55,7 +55,7 @@ public class OrderControllerTest {
         PageResult<OrderSummaryDTO> mockPage = new PageResult<>(orders, 0, 10, 1L);
 
         // 关键：使用 ArgumentMatchers 确保 Mock 匹配所有可能的参数组合
-        when(orderService.getOrderSummaries(
+        when(orderQueryService.getOrderSummaries(
                 isNull(),           // status - null
                 isNull(),           // userId - null
                 isNull(),           // productId - null
@@ -70,7 +70,7 @@ public class OrderControllerTest {
 //        when(orderService.getOrderSummaries(
 //                any(), any(), any(), any(), any(), anyString(), anyInt(), anyInt()
 //        )).thenReturn(mockPage);
-        when(orderService.getOrderSummaries(any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
+        when(orderQueryService.getOrderSummaries(any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> {
                     System.out.println("Mock 被调用了！");
                     return mockPage;
@@ -94,7 +94,7 @@ public class OrderControllerTest {
 //        when(orderService.getOrderSummaries(
 //                any(), any(), any(), any(), any(), anyString(), anyInt(), anyInt()
 //        )).thenReturn(mockPage);
-        when(orderService.getOrderSummaries(any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
+        when(orderQueryService.getOrderSummaries(any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> {
                     System.out.println("Mock 被调用了！");
                     return mockPage;
@@ -128,7 +128,7 @@ public class OrderControllerTest {
         );
         PageResult<OrderSummaryDTO> mockPage = new PageResult<>(orders, 0, 10, 3L);
 
-        when(orderService.getOrderSummaries(any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
+        when(orderQueryService.getOrderSummaries(any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> {
                     System.out.println("Mock 被调用了！");
                     return mockPage;
