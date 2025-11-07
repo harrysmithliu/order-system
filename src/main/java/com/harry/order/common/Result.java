@@ -1,7 +1,10 @@
 package com.harry.order.common;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
 public class Result<T> {
     private int code;
     private String message;
@@ -31,9 +34,4 @@ public class Result<T> {
         return result;
     }
 
-    // getter/setter...
-    public int getCode() { return code; }
-    public String getMessage() { return message; }
-    public T getData() { return data; }
-    public String getTimestamp() { return timestamp; }
 }

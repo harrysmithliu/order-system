@@ -12,9 +12,24 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 
 import java.time.OffsetDateTime;
 
+/**
+ * Spring 会查看异常的类型继承链
+ * 其方法由"按类型优先级智能匹配"。
+ * 方法声明的顺序会影响匹配优先级，所以要把最具体的异常放前面
+ */
 @Slf4j
 @RestControllerAdvice   // 等价于 @ControllerAdvice + @ResponseBody
 public class GlobalExceptionHandler {
+
+    /**
+     * 业务异常处理 - 必须在 Exception 之前
+     */
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiError> handleBusinessException(BusinessException ex, HttpServletRequest req) {
+        log.warn("[业务异常] code={}, message={}", ex.getCode(), ex.getMessage());
+        return build(HttpStatus.BAD_REQUEST, ex.getCode(), ex.getMessage(), req.getRequestURI(), null);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiError> handleNotFound(NotFoundException ex, HttpServletRequest req) {
         return build(HttpStatus.NOT_FOUND, ex.getCode(), ex.getMessage(), req.getRequestURI(), null);
@@ -34,7 +49,7 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", msg, req.getRequestURI(), ex);
     }
 
-    // ↓ 新增：Spring 6.1+ 方法参数验证
+    // 新增：Spring 6.1+ 方法参数验证
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<ApiError> handleHandlerMethodValidation(HandlerMethodValidationException ex, HttpServletRequest req) {
         return build(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", ex.getMessage(), req.getRequestURI(), ex);

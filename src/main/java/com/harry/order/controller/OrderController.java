@@ -60,26 +60,31 @@ public class OrderController {
     ) {
         PageResult<OrderSummaryDTO> result = orderService.getOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, page, size);
         if (result == null || result.getContent() == null || result.getContent().isEmpty()) {
-            throw new NotFoundException("No orders found");
+            throw new NotFoundException("订单");
         }
         return result;
     }
 
     /**
      * 取消订单
+     *
+     * @param orderNo 订单号
+     * @return 成功则返回空结果
+     * @throws NotFoundException 订单不存在时抛出
+     * @throws BusinessException 业务异常时抛出（如订单已取消）
      */
+    @Operation(summary = "Cancel an order")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Order cancelled successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid order status or duplicate cancel"),
+            @ApiResponse(responseCode = "404", description = "Order not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PutMapping("/{orderNo}/cancel")
     public Result<Void> cancelOrder(@PathVariable String orderNo) {
-//        orderCommandService.cancel(orderNo);
-//        return ResponseEntity.ok().build();
-        try {
-            orderCommandService.cancel(orderNo);
-            return Result.success();
-        } catch (NotFoundException e) {
-            return Result.fail(404, e.getMessage());
-        } catch (BusinessException e) {
-            return Result.fail(400, e.getMessage());
-        }
+        // 无需 try-catch，异常交由 GlobalExceptionHandler 处理
+        orderCommandService.cancel(orderNo);
+        return Result.success();
     }
 
 }
