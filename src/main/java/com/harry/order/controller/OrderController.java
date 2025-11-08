@@ -15,18 +15,23 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Min;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Tag(name = "Order API", description = "Order endpoints for pagination and filtering")
 @CrossOrigin(origins = "http://localhost:5173")     //允许跨域（CORS）
 @RestController
 @RequestMapping("/api/orders")
+@SecurityRequirement(name = "bearerAuth") // apply JWT requirement to this controller
 public class OrderController {
 
     @Autowired
@@ -63,8 +68,9 @@ public class OrderController {
     })
     @GetMapping
     public PageResult<OrderSummaryDTO> getOrders(
+            HttpServletRequest request,
             @Parameter(description = "Order status") @RequestParam(name = "status", required = false) OrderStatus status,
-            @Parameter(description = "User ID") @RequestParam(name = "userId", required = false) Long userId,
+            //@Parameter(description = "User ID") @RequestParam(name = "userId", required = false) Long userId,
             @Parameter(description = "Product ID") @RequestParam(name = "productId", required = false) Long productId,
             @Parameter(description = "Start creation time (ISO format)", example = "2024-01-01T00:00:00")
             @RequestParam(name = "createdAfter", required = false)
@@ -76,6 +82,10 @@ public class OrderController {
             @Parameter(description = "Page number (starting from 0)") @RequestParam(name = "page", defaultValue = "0") @Min(0) int page,
             @Parameter(description = "Page size") @RequestParam(name = "size", defaultValue = "10") @Min(1) int size
     ) {
+        String userKey = (String) request.getAttribute("userKey");
+        Long userId = (Long) request.getAttribute("userId");
+        log.info("User [{}|{}] requests order list.", userId, userKey);
+
         PageResult<OrderSummaryDTO> result = orderQueryService.getOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, page, size);
         if (result == null || result.getContent() == null || result.getContent().isEmpty()) {
             throw new NotFoundException("Order");
@@ -115,9 +125,16 @@ public class OrderController {
             )
     })
     @PutMapping("/{orderNo}/cancel")
-    public Result<Void> cancelOrder(@PathVariable String orderNo) {
+    public Result<Void> cancelOrder(
+            HttpServletRequest request,
+            @PathVariable String orderNo
+    ) {
+        String userKey = (String) request.getAttribute("userKey");
+        Long userId = (Long) request.getAttribute("userId");
+        log.info("User [{}|{}] requests to cancel order [{}].", userId, userKey, orderNo);
+
         // 无需 try-catch，异常交由 GlobalExceptionHandler 处理
-        orderCommandService.cancel(orderNo);
+        orderCommandService.cancel(orderNo, userKey);
         return Result.success();
     }
 

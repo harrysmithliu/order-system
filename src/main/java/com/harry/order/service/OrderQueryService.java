@@ -23,15 +23,6 @@ public class OrderQueryService {
 
     /**
      * 在 Service 的分页查询方法上加 @Cacheable，并指定 key 生成器
-     * @param status
-     * @param userId
-     * @param productId
-     * @param createdAfter
-     * @param createdBefore
-     * @param keyword
-     * @param page
-     * @param size
-     * @return
      */
     @Cacheable(cacheNames = "order:pages", keyGenerator = "queryKey",
             unless = "#result == null || #result.content.isEmpty()")

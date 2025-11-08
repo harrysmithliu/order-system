@@ -26,14 +26,6 @@ public class OrderCommandService {
     private final RabbitTemplate rabbitTemplate;
     private final OutboxService outboxService;
 
-//    @Caching(evict = {
-//            @CacheEvict(cacheNames = "order:byId", key = "#result.id", condition = "#result != null"),
-//            @CacheEvict(cacheNames = "order:pages", allEntries = true) // 页缓存整体失效（简单可靠）
-//    })
-//    public Order create(Order order) {
-//        return orderRepository.save(order);
-//    }
-
     @Transactional
     public Order create(Order order) {
         Order saved = orderRepository.save(order);
@@ -53,7 +45,7 @@ public class OrderCommandService {
             @CacheEvict(cacheNames = "order:pages", allEntries = true)
     })
     @Transactional
-    public void cancel(String orderNo) {
+    public void cancel(String orderNo, String userKey) {
         // 1. 数据层操作
         Order order = orderRepository.findByOrderNo(orderNo)
                 .orElseThrow(() -> new NotFoundException("Order " + orderNo));
