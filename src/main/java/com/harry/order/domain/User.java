@@ -35,7 +35,14 @@ public class User {
     @Column(length = 100)
     private String email;
 
+    /** BCrypt Hash Value Password */
+    @Column(nullable = false, length = 100)
+    private String password;
+
     /** 交给数据库的 DEFAULT CURRENT_TIMESTAMP 生成 */
     @Column(name = "create_time", nullable = false, insertable = false, updatable = false)
     private LocalDateTime createTime;
+
+    @Column(name = "update_time", nullable = false, insertable = false, updatable = false)
+    private LocalDateTime updateTime;
 }
