@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * - 支持：status / userId / productId / 时间范围 / 关键词（匹配订单号、商品名、用户名）
      * - 返回轻量 DTO，避免实体序列化 & N+1
      */
-    @Query("SELECT OrderSummaryVO(" +
+    @Query("SELECT new com.harry.order.model.vo.OrderSummaryVO(" +
             " o.id, o.orderNo, u.id, u.username, p.id, p.productName, " +
             " o.quantity, o.totalAmount, o.status, o.createTime, o.updateTime) " +
             // 这里改成“全限定名”，避免与关键字 ORDER 冲突
