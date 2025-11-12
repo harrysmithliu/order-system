@@ -1,6 +1,6 @@
 package com.harry.order.repository;
 
-import com.harry.order.domain.User;
+import com.harry.order.model.po.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

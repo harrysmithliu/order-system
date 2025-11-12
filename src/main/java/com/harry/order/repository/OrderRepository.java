@@ -1,8 +1,8 @@
 package com.harry.order.repository;
 
-import com.harry.order.domain.Order;
-import com.harry.order.domain.OrderStatus;
-import com.harry.order.service.dto.OrderSummaryDTO;
+import com.harry.order.model.po.Order;
+import com.harry.order.model.bo.OrderStatus;
+import com.harry.order.model.vo.OrderSummaryVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,11 +18,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * - 支持：status / userId / productId / 时间范围 / 关键词（匹配订单号、商品名、用户名）
      * - 返回轻量 DTO，避免实体序列化 & N+1
      */
-    @Query("SELECT new com.harry.order.service.dto.OrderSummaryDTO(" +
+    @Query("SELECT OrderSummaryVO(" +
             " o.id, o.orderNo, u.id, u.username, p.id, p.productName, " +
             " o.quantity, o.totalAmount, o.status, o.createTime, o.updateTime) " +
             // 这里改成“全限定名”，避免与关键字 ORDER 冲突
-            "FROM com.harry.order.domain.Order o " +
+            "FROM com.harry.order.model.po.Order o " +
             "JOIN o.user u " +
             "JOIN o.product p " +
             "WHERE (:status IS NULL OR o.status = :status) " +
@@ -33,7 +33,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "AND (:keyword IS NULL OR o.orderNo LIKE CONCAT('%', :keyword, '%') " +
             " OR p.productName LIKE CONCAT('%', :keyword, '%') " +
             " OR u.username LIKE CONCAT('%', :keyword, '%'))")
-    Page<OrderSummaryDTO> findOrderSummaries(
+    Page<OrderSummaryVO> findOrderSummaries(
             @Param("status") OrderStatus status,
             @Param("userId") Long userId,
             @Param("productId") Long productId,

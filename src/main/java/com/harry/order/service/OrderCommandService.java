@@ -2,8 +2,8 @@ package com.harry.order.service;
 
 import com.harry.order.common.ErrorCode;
 import com.harry.order.config.RabbitMQConfig;
-import com.harry.order.domain.Order;
-import com.harry.order.domain.OrderStatus;
+import com.harry.order.model.po.Order;
+import com.harry.order.model.bo.OrderStatus;
 import com.harry.order.event.OrderEvent;
 import com.harry.order.exception.BusinessException;
 import com.harry.order.exception.NotFoundException;

@@ -1,4 +1,4 @@
-package com.harry.order.domain;
+package com.harry.order.model.bo;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

@@ -1,6 +1,6 @@
 package com.harry.order.event;
 
-import com.harry.order.domain.OrderStatus;
+import com.harry.order.model.bo.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

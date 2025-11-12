@@ -2,13 +2,13 @@ package com.harry.order.controller;
 
 import com.harry.order.common.PageResult;
 import com.harry.order.common.Result;
-import com.harry.order.domain.OrderStatus;
+import com.harry.order.model.bo.OrderStatus;
 import com.harry.order.exception.ApiError;
 import com.harry.order.exception.BusinessException;
 import com.harry.order.exception.NotFoundException;
 import com.harry.order.service.OrderCommandService;
 import com.harry.order.service.OrderQueryService;
-import com.harry.order.service.dto.OrderSummaryDTO;
+import com.harry.order.model.vo.OrderSummaryVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -67,7 +67,7 @@ public class OrderController {
             )
     })
     @GetMapping
-    public PageResult<OrderSummaryDTO> getOrders(
+    public PageResult<OrderSummaryVO> getOrders(
             HttpServletRequest request,
             @Parameter(description = "Order status") @RequestParam(name = "status", required = false) OrderStatus status,
             //@Parameter(description = "User ID") @RequestParam(name = "userId", required = false) Long userId,
@@ -86,7 +86,7 @@ public class OrderController {
         Long userId = (Long) request.getAttribute("userId");
         log.info("User [{}|{}] requests order list.", userId, userKey);
 
-        PageResult<OrderSummaryDTO> result = orderQueryService.getOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, page, size);
+        PageResult<OrderSummaryVO> result = orderQueryService.getOrderSummaries(status, userId, productId, createdAfter, createdBefore, keyword, page, size);
         if (result == null || result.getContent() == null || result.getContent().isEmpty()) {
             throw new NotFoundException("Order");
         }

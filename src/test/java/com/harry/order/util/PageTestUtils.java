@@ -1,8 +1,8 @@
 package com.harry.order.util;
 
 import com.harry.order.common.PageResult;
-import com.harry.order.domain.OrderStatus;
-import com.harry.order.service.dto.OrderSummaryDTO;
+import com.harry.order.model.bo.OrderStatus;
+import com.harry.order.model.vo.OrderSummaryVO;
 import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
@@ -28,10 +28,10 @@ public class PageTestUtils {
      * 创建一个包含指定数量元素的分页
      * 用于测试 list() 或分页接口返回结构
      */
-    public static PageResult<OrderSummaryDTO> pageOf(int size) {
-        List<OrderSummaryDTO> list = new ArrayList<>();
+    public static PageResult<OrderSummaryVO> pageOf(int size) {
+        List<OrderSummaryVO> list = new ArrayList<>();
         for (int i = 1; i <= size; i++) {
-            OrderSummaryDTO dto = new OrderSummaryDTO();
+            OrderSummaryVO dto = new OrderSummaryVO();
             dto.setId((long) i);
             dto.setOrderNo("ORD-" + i);
             dto.setUsername("User" + i);
@@ -43,7 +43,7 @@ public class PageTestUtils {
             list.add(dto);
         }
         //        return new PageImpl<>(list, PageRequest.of(0, size), list.size());
-        Page<OrderSummaryDTO> p = new PageImpl<>(list, PageRequest.of(0, size), list.size());
+        Page<OrderSummaryVO> p = new PageImpl<>(list, PageRequest.of(0, size), list.size());
         return new PageResult<>(p.getContent(), p.getNumber(), p.getSize(), p.getTotalElements());
     }
 

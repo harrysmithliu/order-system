@@ -1,7 +1,7 @@
-package com.harry.order.service.dto;
+package com.harry.order.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.harry.order.domain.OrderStatus;
+import com.harry.order.model.bo.OrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 @Schema(description = "Order summary information")
-public class OrderSummaryDTO {
+public class OrderSummaryVO {
 
     /** 订单主键 */
     @Schema(description = "Order ID", example = "1001")

@@ -3,7 +3,7 @@ package com.harry.order.controller;
 import com.harry.order.ValidationConfig;
 import com.harry.order.common.PageResult;
 import com.harry.order.service.OrderQueryService;
-import com.harry.order.service.dto.OrderSummaryDTO;
+import com.harry.order.model.vo.OrderSummaryVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -42,7 +42,7 @@ public class OrderControllerTest {
     @Test
     void list_shouldReturn200_whenOK() throws Exception {
         // 创建真实的测试数据
-        OrderSummaryDTO order = new OrderSummaryDTO();
+        OrderSummaryVO order = new OrderSummaryVO();
         order.setId(1L);
         order.setOrderNo("ORD-001");
         order.setUsername("testUser");
@@ -51,8 +51,8 @@ public class OrderControllerTest {
         order.setTotalAmount(BigDecimal.valueOf(100.00));
         order.setCreateTime(LocalDateTime.now());
 
-        List<OrderSummaryDTO> orders = List.of(order);
-        PageResult<OrderSummaryDTO> mockPage = new PageResult<>(orders, 0, 10, 1L);
+        List<OrderSummaryVO> orders = List.of(order);
+        PageResult<OrderSummaryVO> mockPage = new PageResult<>(orders, 0, 10, 1L);
 
         // 关键：使用 ArgumentMatchers 确保 Mock 匹配所有可能的参数组合
         when(orderQueryService.getOrderSummaries(
@@ -84,12 +84,12 @@ public class OrderControllerTest {
     @Test
     void list_shouldReturn200_withMultipleOrders() throws Exception {
         // 测试返回多条订单
-        List<OrderSummaryDTO> orders = List.of(
+        List<OrderSummaryVO> orders = List.of(
                 createOrderSummary(1L, "ORD-001"),
                 createOrderSummary(2L, "ORD-002"),
                 createOrderSummary(3L, "ORD-003")
         );
-        PageResult<OrderSummaryDTO> mockPage = new PageResult<>(orders, 0, 10, 3L);
+        PageResult<OrderSummaryVO> mockPage = new PageResult<>(orders, 0, 10, 3L);
 
 //        when(orderService.getOrderSummaries(
 //                any(), any(), any(), any(), any(), anyString(), anyInt(), anyInt()
@@ -107,8 +107,8 @@ public class OrderControllerTest {
     }
 
     // 辅助方法：创建测试订单
-    private OrderSummaryDTO createOrderSummary(Long id, String orderNo) {
-        OrderSummaryDTO dto = new OrderSummaryDTO();
+    private OrderSummaryVO createOrderSummary(Long id, String orderNo) {
+        OrderSummaryVO dto = new OrderSummaryVO();
         dto.setId(id);
         dto.setOrderNo(orderNo);
         dto.setUsername("User" + id);
@@ -121,12 +121,12 @@ public class OrderControllerTest {
 
     @Test
     void list_printJsonUsingMvcResult() throws Exception {
-        List<OrderSummaryDTO> orders = List.of(
+        List<OrderSummaryVO> orders = List.of(
                 createOrderSummary(1L, "ORD-001"),
                 createOrderSummary(2L, "ORD-002"),
                 createOrderSummary(3L, "ORD-003")
         );
-        PageResult<OrderSummaryDTO> mockPage = new PageResult<>(orders, 0, 10, 3L);
+        PageResult<OrderSummaryVO> mockPage = new PageResult<>(orders, 0, 10, 3L);
 
         when(orderQueryService.getOrderSummaries(any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> {

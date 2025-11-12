@@ -1,4 +1,4 @@
-package com.harry.order.domain;
+package com.harry.order.model.bo;
 
 public enum OrderStatus {
     PENDING_PAY(0), PAID(1), SHIPPED(2), COMPLETED(3), CANCELED(4);

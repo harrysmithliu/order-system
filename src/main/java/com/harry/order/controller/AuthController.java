@@ -1,17 +1,19 @@
 package com.harry.order.controller;
 
 import com.harry.order.common.JwtTokenUtil;
-import com.harry.order.domain.User;
+import com.harry.order.model.po.User;
+import com.harry.order.model.dto.LoginRequest;
 import com.harry.order.repository.UserRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,7 +33,10 @@ public class AuthController {
      * Secure login endpoint with BCrypt verification.
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String loginId, @RequestParam String password) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) {
+        String loginId = request.getLoginId();
+        String password = request.getPassword();
+
         log.info("Login attempt for identifier: {}", loginId);
 
         // 1. Try to find user by username, phone, or email

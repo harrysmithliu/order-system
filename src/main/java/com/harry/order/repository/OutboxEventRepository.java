@@ -1,6 +1,6 @@
 package com.harry.order.repository;
 
-import com.harry.order.domain.OutboxEvent;
+import com.harry.order.model.po.OutboxEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

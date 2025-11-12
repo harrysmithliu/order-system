@@ -1,6 +1,6 @@
 package com.harry.order.scheduler;
 
-import com.harry.order.domain.OutboxEvent;
+import com.harry.order.model.po.OutboxEvent;
 import com.harry.order.repository.OutboxEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

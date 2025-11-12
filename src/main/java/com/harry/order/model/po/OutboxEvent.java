@@ -1,4 +1,4 @@
-package com.harry.order.domain;
+package com.harry.order.model.po;
 
 import jakarta.persistence.*;
 import lombok.*;
